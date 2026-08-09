@@ -48,6 +48,18 @@ icon: "circle-question"
     the database.
   </Accordion>
 
+  <Accordion title="Does it work on Purpur, Pufferfish or another Paper fork?" icon="code-fork">
+    Yes, with no configuration and no separate build. They inherit the whole
+    Paper API rLogin uses, and none of them change anything about logins,
+    connections or UUIDs — so there is nothing for rLogin to adapt to.
+
+    The startup line names whichever fork you are running, which is the part
+    worth quoting in a bug report.
+
+    Spigot and CraftBukkit are a different matter: rLogin uses Paper APIs and
+    does **not** run on them.
+  </Accordion>
+
   <Accordion title="Does it work on Folia?" icon="layer-group">
     Yes, from day one. Every scheduled task uses the regional and per-player
     schedulers; nothing touches Bukkit's global scheduler where it would matter.
