@@ -1,7 +1,7 @@
 {
   "$schema": "https://mintlify.com/docs.json",
   "theme": "almond",
-  "name": "rLogin",
+  "name": "Pyrelight",
   "colors": {
     "primary": "#ef7025",
     "light": "#eec9bc",
@@ -15,45 +15,48 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "rLogin",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "quickstart",
-              "installation"
+              "rlogin/introduction",
+              "rlogin/installation",
+              "rlogin/quickstart"
             ]
           },
           {
             "group": "Configuration",
             "pages": [
-              "configuration/config-file",
-              "configuration/database",
-              "configuration/messages"
+              "rlogin/configuration/config-file",
+              "rlogin/configuration/database",
+              "rlogin/configuration/proxy",
+              "rlogin/configuration/messages"
             ]
           },
           {
             "group": "Features",
             "pages": [
-              "features/premium-auth",
-              "features/cracked-auth",
-              "features/session-management",
-              "features/security"
+              "rlogin/features/premium-auth",
+              "rlogin/features/cracked-auth",
+              "rlogin/features/sessions",
+              "rlogin/features/security",
+              "rlogin/features/spawns",
+              "rlogin/features/migrating"
             ]
           },
           {
-            "group": "Commands & Permissions",
+            "group": "Reference",
             "pages": [
-              "reference/commands",
-              "reference/permissions"
+              "rlogin/reference/commands",
+              "rlogin/reference/permissions"
             ]
           },
           {
             "group": "Help",
             "pages": [
-              "help/faq",
-              "help/troubleshooting"
+              "rlogin/help/faq",
+              "rlogin/help/troubleshooting"
             ]
           }
         ]
@@ -63,18 +66,19 @@
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "https://discord.gg/pyrelight"
+        "label": "Discord",
+        "href": "https://discord.gg/5tuSrNRk3a"
       }
     ],
     "primary": {
       "type": "github",
-      "href": "https://github.com/pyrelight"
+      "href": "https://github.com/raimondarias/rlogin"
     }
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/pyrelight"
+      "github": "https://github.com/raimondarias/rlogin",
+      "discord": "https://discord.gg/5tuSrNRk3a"
     }
   }
 }

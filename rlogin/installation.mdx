@@ -1,0 +1,117 @@
+---
+title: "Installation"
+description: "Two jars, one conditional dependency, and nothing to configure."
+icon: "download"
+---
+
+## Requirements
+
+| | |
+|---|---|
+| **Server** | Paper, Folia or Velocity |
+| **Minecraft** | 1.21 or newer |
+| **Java** | 21 or newer |
+
+<Card title="Download rLogin" icon="download" href="https://modrinth.com/plugin/rlogin" horizontal>
+  Modrinth · also on [Hangar](https://hangar.papermc.io/raimondarias/rlg) and
+  [GitHub Releases](https://github.com/raimondarias/rlogin/releases)
+</Card>
+
+There are two jars, and which ones you need depends on your setup:
+
+- **`rlogin-paper.jar`** — goes on every Paper/Folia server. This is where
+  accounts, passwords and the database live.
+- **`rlogin-velocity.jar`** — only if you run a Velocity proxy. It routes
+  players and reports logins; it never touches the database.
+
+## Standalone server
+
+One Paper server, no proxy, `online-mode: false` in `server.properties`.
+
+<Steps>
+  <Step title="Install PacketEvents">
+    Download [PacketEvents](https://modrinth.com/plugin/packetevents) and put it
+    in `plugins/`. See [why](#packetevents) below.
+  </Step>
+  <Step title="Install rLogin">
+    Put `rlogin-paper.jar` in `plugins/` as well.
+  </Step>
+  <Step title="Start the server">
+    That's it. Premium verification turns itself on because it detected the one
+    setup that needs it.
+
+    ```
+    [rLogin] rLogin ready. Folia: false | Database: sqlite | Setup: standalone-offline | Auth mode: auto | Premium auto-login: on | Floodgate: not installed
+    ```
+  </Step>
+</Steps>
+
+## Behind a Velocity proxy
+
+<Steps>
+  <Step title="Install rlogin-paper on every backend">
+    Each backend keeps `online-mode: false` and has Velocity Modern Forwarding
+    configured as usual.
+  </Step>
+  <Step title="Install rlogin-velocity on the proxy">
+    The proxy runs `online-mode: true` in `velocity.toml`.
+  </Step>
+  <Step title="Point the backends at one database">
+    Only needed if you have **more than one** backend — otherwise an account
+    created on one is unknown on the others. See
+    [Database](/rlogin/configuration/database).
+  </Step>
+  <Step title="Name your auth server">
+    In the proxy's `plugins/rlogin/config.yml`, set `login-servers.servers` to
+    the server that should ask players to log in. See
+    [Proxy setup](/rlogin/configuration/proxy).
+  </Step>
+</Steps>
+
+<Note>
+  PacketEvents is **not** needed here. The proxy already verified the connection
+  against Mojang before the backend ever saw it, and verifying twice would be
+  pointless.
+</Note>
+
+## Online-mode server
+
+Put `rlogin-paper.jar` in `plugins/` and start. Every player is premium by
+definition, so nobody is ever asked for a password — rLogin is there for the
+spawn points, the messages and `/rlogin` administration.
+
+## PacketEvents
+
+<Warning>
+  On a standalone `online-mode: false` server, rLogin **refuses all
+  connections** until PacketEvents is installed. This is deliberate.
+</Warning>
+
+Verifying a premium account means performing the encryption handshake the
+server itself skipped, and that has to happen at the packet level, before
+Bukkit fires a single event. PacketEvents is what makes that possible.
+
+The alternative would be to start anyway and quietly treat every premium player
+as cracked — which means their name is claimable by anyone, and the server
+silently stops doing the one thing it was installed to do. Refusing to start is
+noisy, but it is honest, and it takes a minute to fix.
+
+<Info>
+  PacketEvents is licensed GPL-3.0 and is never bundled into rLogin. It stays a
+  separate plugin that rLogin talks to at runtime.
+</Info>
+
+You can avoid the requirement entirely with
+[`auth-mode: offline`](/rlogin/configuration/config-file#auth-mode), which turns
+off Mojang verification altogether and asks everyone for a password.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Quickstart" icon="rocket" href="/rlogin/quickstart">
+    The first five minutes, from a player's point of view.
+  </Card>
+  <Card title="config.yml" icon="sliders" href="/rlogin/configuration/config-file">
+    Every setting, explained.
+  </Card>
+</CardGroup>

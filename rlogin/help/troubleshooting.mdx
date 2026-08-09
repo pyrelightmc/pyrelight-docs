@@ -1,0 +1,173 @@
+---
+title: "Troubleshooting"
+description: "Symptoms, causes, and the line in the console that tells you which."
+icon: "wrench"
+---
+
+## Start here
+
+rLogin prints one line at startup that answers most questions:
+
+```
+[rLogin] rLogin ready. Folia: false | Database: sqlite | Setup: standalone-offline | Auth mode: auto | Premium auto-login: on | Floodgate: not installed
+```
+
+`Setup` is what rLogin detected, and it decides everything else:
+
+| Value | Meaning |
+|---|---|
+| `standalone-offline` | One server, `online-mode: false`. rLogin verifies premium itself and **needs PacketEvents**. |
+| `behind-proxy` | Velocity or BungeeCord forwarding detected. The proxy verifies. |
+| `online-mode` | The server verifies. Nobody is asked for a password. |
+
+If that line disagrees with your setup, the problem is upstream of rLogin — in
+`server.properties`, `config/paper-global.yml` or `spigot.yml`.
+
+<Tip>
+  Set `general.debug: true` and reconnect. You get one line per connection
+  explaining exactly why it was let in, asked for a password, or refused.
+</Tip>
+
+---
+
+## Nobody can connect: "Server misconfigured"
+
+Players see a kick screen telling them to install PacketEvents.
+
+**Cause.** Standalone `online-mode: false` without
+[PacketEvents](/rlogin/installation#packetevents). rLogin refuses every
+connection rather than silently downgrading every premium player to cracked.
+
+**Fix.** Install PacketEvents, or set
+[`auth-mode: offline`](/rlogin/configuration/config-file#auth-mode) if you want
+passwords for everyone.
+
+---
+
+## Premium players are still asked for a password
+
+<AccordionGroup>
+  <Accordion title="Check the Setup line first" icon="magnifying-glass">
+    If it says `behind-proxy` but you have no proxy, something in
+    `paper-global.yml` or `spigot.yml` has forwarding enabled. rLogin is trusting
+    a proxy that is not there, so nothing ever verifies the connection.
+  </Accordion>
+  <Accordion title="premium.auto-login is false" icon="toggle-off">
+    Or `auth-mode` is `offline`, which turns Mojang verification off entirely.
+  </Accordion>
+  <Accordion title="Mojang was unreachable" icon="cloud-slash">
+    With `api-failure-policy: fail-open` the player is treated as cracked. The
+    console says so. Raise `api-timeout-ms` if your host has slow DNS.
+  </Accordion>
+  <Accordion title="They are on a cracked launcher" icon="user">
+    The handshake proves ownership of the account. A launcher that cannot
+    complete it is not premium, whatever the name says.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## A premium player joined and lost everything
+
+They arrived with their **real** UUID, and their old data belongs to the offline
+one — this is `uuid-type: real` working as intended, but it is a surprise the
+first time.
+
+```bash
+/rlogin changeuuid <old-name-or-uuid> <new-uuid>
+```
+
+<Warning>
+  That moves the rLogin account only: password, 2FA and registration date.
+  Inventory, permissions and economy belong to other plugins and stay where they
+  are — move those with whatever tool those plugins provide.
+</Warning>
+
+To avoid it entirely on an existing offline server, use `uuid-type: cracked`.
+
+---
+
+## Players are asked to log in on every server switch
+
+**Cause.** `rlogin-velocity` is not installed on the proxy, so each backend
+decides independently.
+
+**Fix.** Install it, and list your auth server in `login-servers.servers`. See
+[Proxy setup](/rlogin/configuration/proxy).
+
+---
+
+## Players reach a server before logging in
+
+**Cause.** `login-servers.enforce` is `false`, so Velocity's own `try` order
+wins and can send them somewhere unprotected.
+
+**Fix.** Set it back to `true` unless you route the first server yourself.
+
+---
+
+## Accounts exist on one server but not another
+
+**Cause.** Each backend has its own SQLite file.
+
+**Fix.** Point them all at the same MySQL database. See
+[Database](/rlogin/configuration/database).
+
+<Warning>
+  They must also agree on `uuid-type`. If one issues real UUIDs and another
+  offline ones, the same player is two different accounts depending on where
+  they land.
+</Warning>
+
+---
+
+## "Remember me" is not working
+
+| Check | |
+|---|---|
+| Same IP? | Sessions are bound to an address. A mobile network that rotates addresses will not match. |
+| Window expired? | `session.remember-me-minutes`, 30 by default. |
+| Does the account have 2FA? | Those accounts are deliberately excluded. |
+| Did they change their password? | That ends the session immediately. |
+
+---
+
+## Bedrock players are asked to register
+
+**Cause.** `bedrock.prefix` does not match Floodgate's `username-prefix`, so
+rLogin does not recognise the names as Bedrock.
+
+**Fix.** Make them identical, and confirm the startup line says
+`Floodgate: detected`.
+
+---
+
+## Players are disconnected while still typing
+
+`limbo.login-timeout-seconds` is 60 by default. Raise it, or set `0` to disable
+it — but read [why it exists](/rlogin/features/security#login-timeout) first.
+
+---
+
+## A setting I added to config.yml did nothing
+
+Run `/rlogin reload` and watch the console. If the file has a YAML error, the
+reload says so and keeps the previous config rather than starting with none.
+
+<Note>
+  When you update rLogin, new settings are appended to your existing file
+  automatically and your values are kept. The console lists what was added.
+</Note>
+
+---
+
+## Reporting a bug
+
+<Card title="GitHub Issues" icon="github" href="https://github.com/raimondarias/rlogin/issues" horizontal>
+  Include the startup line above, your `Setup` value, and the console output
+  with `general.debug: true`.
+</Card>
+
+<Card title="Discord" icon="discord" href="https://discord.gg/5tuSrNRk3a" horizontal>
+  Faster for "is this normal?" questions.
+</Card>

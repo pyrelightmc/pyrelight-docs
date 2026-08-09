@@ -1,0 +1,102 @@
+---
+title: "FAQ"
+description: "The questions that come up before anyone opens the config."
+icon: "circle-question"
+---
+
+<AccordionGroup>
+  <Accordion title="Do premium players really get their real UUID?" icon="fingerprint">
+    Yes, on a standalone server with `uuid-type: real` (the default). rLogin
+    performs the same encryption handshake an online-mode server does, and hands
+    the server the UUID and signed skin Mojang returned.
+
+    Your other plugins — permissions, economy, bans — see the same UUID they
+    would on any online-mode server, and switching to `online-mode: true` later
+    is a non-event.
+  </Accordion>
+
+  <Accordion title="Why does rLogin refuse to let anyone in without PacketEvents?" icon="plug">
+    Only on a standalone `online-mode: false` server, which is the one setup
+    where rLogin has to do the Mojang verification itself. That happens at the
+    packet level, and PacketEvents is what makes it possible.
+
+    Starting anyway would mean quietly treating every premium player as cracked
+    — their names become claimable by anyone, and the server silently stops
+    doing the thing it was installed to do. Refusing is noisy, but honest.
+
+    [`auth-mode: offline`](/rlogin/configuration/config-file#auth-mode) removes
+    the requirement if you genuinely want passwords for everyone.
+  </Accordion>
+
+  <Accordion title="Do I need MySQL?" icon="database">
+    Only if you run **more than one backend server**. Otherwise SQLite is the
+    right answer and needs no configuration.
+
+    Running a proxy does not by itself require MySQL — the proxy never touches
+    the database.
+  </Accordion>
+
+  <Accordion title="Does it work on Folia?" icon="layer-group">
+    Yes, from day one. Every scheduled task uses the regional and per-player
+    schedulers; nothing touches Bukkit's global scheduler where it would matter.
+  </Accordion>
+
+  <Accordion title="Can a cracked player steal a premium name?" icon="user-lock">
+    Not by default — `premium.protect-premium-names` refuses `/register` on any
+    name that belongs to a real account.
+
+    If you turn it off, rLogin still keeps them apart: under `uuid-type: real`
+    the impostor and the real owner are two different accounts, and
+    `/rlogin changeuuid` can hand the login to the rightful owner. See
+    [Password login](/rlogin/features/cracked-auth#when-a-name-is-already-taken).
+  </Accordion>
+
+  <Accordion title="What happens when Mojang goes down?" icon="cloud-slash">
+    `premium.api-failure-policy` decides. `fail-open` (default) treats the player
+    as cracked and asks for `/login` — the server stays up. `fail-closed`
+    refuses connections until Mojang answers again.
+
+    Recent lookups are cached for an hour, so short outages often go unnoticed.
+  </Accordion>
+
+  <Accordion title="Are passwords visible in the console?" icon="eye-slash">
+    No. The server logs commands before any plugin can cancel them, so rLogin
+    installs a log filter that masks the password.
+
+    There is no setting to disable it — see
+    [Security](/rlogin/features/security#passwords-never-reach-the-log) for why.
+  </Accordion>
+
+  <Accordion title="Can players choose their own language?" icon="language">
+    Not currently. The language is server-wide, set with `general.language`.
+    Seventeen are bundled and you can add your own by dropping a
+    `lang_<code>.yml` into the `messages/` folder.
+  </Accordion>
+
+  <Accordion title="Can I import from nLogin or JPremium?" icon="right-left">
+    Not yet — only AuthMe is implemented. The command tells you so instead of
+    failing halfway. See [Migrating](/rlogin/features/migrating).
+  </Accordion>
+
+  <Accordion title="Does rLogin support Bedrock?" icon="cube">
+    Yes, through Geyser/Floodgate. Bedrock players were already verified by
+    Microsoft, so they are treated as premium and never asked to log in. Make
+    sure `bedrock.prefix` matches Floodgate's `username-prefix`.
+  </Accordion>
+
+  <Accordion title="Is rLogin free?" icon="scale-balanced">
+    Yes, MIT licensed. PacketEvents is a separate GPL-3.0 plugin that rLogin
+    talks to at runtime; it is never bundled.
+  </Accordion>
+</AccordionGroup>
+
+## Still stuck?
+
+<CardGroup cols={2}>
+  <Card title="Troubleshooting" icon="wrench" href="/rlogin/help/troubleshooting">
+    Specific symptoms and what causes them.
+  </Card>
+  <Card title="Discord" icon="discord" href="https://discord.gg/5tuSrNRk3a">
+    Ask, and bring your startup log.
+  </Card>
+</CardGroup>

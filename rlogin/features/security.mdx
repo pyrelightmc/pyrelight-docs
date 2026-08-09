@@ -1,0 +1,134 @@
+---
+title: "Security"
+description: "Password storage, brute-force lockouts, 2FA, and the one setting that isn't a setting."
+icon: "shield-halved"
+---
+
+## Passwords never reach the log
+
+The Minecraft server writes every command to the console **before** any plugin
+can cancel it. That means `/login hunter2` normally lands in `latest.log` in the
+clear, ready to be read by anyone with the file — or shipped off to whatever
+log aggregator the host runs.
+
+rLogin installs a log filter at startup that masks the password in any command
+that carries one, and records the attempt without it.
+
+<Warning>
+  **There is no setting to turn this off**, and that is deliberate.
+
+  An admin who could disable it would be able to build a file of their players'
+  passwords. People reuse passwords across servers, and across things that
+  aren't servers. It is not a knob anyone should have.
+</Warning>
+
+Stored passwords are **bcrypt** hashes, cost 10 by default. Raising
+`security.password.bcrypt-cost` doubles the hashing time per `+1`, which is what
+makes a stolen database expensive to crack — at the cost of slower logins on a
+weak CPU.
+
+## Brute-force protection
+
+```yaml
+security:
+  bruteforce:
+    enabled: true
+    max-attempts: 5
+    lockout-seconds: 60
+    lockout-multiplier: 2.0
+    max-lockout-seconds: 3600
+```
+
+After `max-attempts` wrong passwords the **address** is locked out, and each
+further failure multiplies the lockout — 60s, then 120s, 240s, up to an hour.
+
+<Note>
+  The account is never locked. Locking accounts would let anyone who knows a
+  name keep its owner out of their own server, just by failing logins on
+  purpose. Locking the address puts the cost on whoever is actually guessing.
+</Note>
+
+## Two-factor authentication
+
+Optional TOTP through any authenticator app — Google Authenticator, Aegis,
+1Password, whatever the player already uses. They opt in themselves; there is no
+way for an admin to impose it.
+
+<Steps>
+  <Step title="The player starts setup">
+    ```bash
+    /2fa enable
+    ```
+    They are shown a secret to add to their app.
+  </Step>
+  <Step title="They confirm with a code">
+    ```bash
+    /2fa confirm <code>
+    ```
+    Proves the app is set up correctly before anything is enforced — nobody gets
+    locked out by a half-finished setup.
+  </Step>
+  <Step title="From then on">
+    ```bash
+    /login <password> <code>
+    ```
+  </Step>
+</Steps>
+
+`/2fa disable` turns it off again.
+
+```yaml
+security:
+  totp:
+    enabled: true
+    issuer: rLogin
+```
+
+`issuer` is the name players see for this server inside their authenticator app
+— worth changing to your server's name if you run more than one.
+
+<Note>
+  Accounts with 2FA are never given a
+  ["remember me" session](/rlogin/features/sessions#accounts-with-2fa-are-excluded).
+</Note>
+
+## Premium name protection
+
+```yaml
+premium:
+  protect-premium-names: true
+```
+
+Refuses `/register` on a name that belongs to a real Minecraft account, so its
+owner never loses the ability to auto-login with it. On by default.
+
+## Login timeout
+
+```yaml
+limbo:
+  login-timeout-seconds: 60
+```
+
+A connection parked forever at the login prompt still holds a player slot —
+which is all it takes to fill a server without owning a single account. Players
+who never log in are disconnected. `0` disables it.
+
+## What rLogin does not claim
+
+<AccordionGroup>
+  <Accordion title="A name lookup is not verification" icon="triangle-exclamation">
+    Asking Mojang "is this name premium?" proves only that the name exists.
+    Anyone can type it. rLogin never treats that answer as proof — it is used
+    only to decide whether the cryptographic handshake is worth starting.
+  </Accordion>
+  <Accordion title="An IP is not an identity" icon="triangle-exclamation">
+    "Remember me" is a convenience with a real trade-off, spelled out in
+    [Sessions](/rlogin/features/sessions#what-it-trusts). It is 30 minutes by
+    default for a reason.
+  </Accordion>
+  <Accordion title="rLogin cannot protect a server that trusts the wrong thing" icon="triangle-exclamation">
+    If `login-servers.enforce` is off and your proxy routes players somewhere
+    unprotected first, they arrive before rLogin can ask them anything. Leave it
+    on unless you handle the routing yourself.
+  </Accordion>
+</AccordionGroup>

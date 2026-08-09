@@ -1,0 +1,91 @@
+---
+title: "Introduction"
+description: "Premium players join without typing anything. Everyone else logs in with a password."
+icon: "door-open"
+---
+
+Most authentication plugins make you pick a side. Run `online-mode: true` and
+every player without a Minecraft account is turned away. Run offline and you
+have to ask *everybody* for a password — including the people who already own
+the account they are connecting with.
+
+rLogin does neither. It verifies premium accounts against Mojang itself and
+lets them straight in, while everyone else registers with a password as usual.
+
+<CardGroup cols={2}>
+  <Card title="Premium players" icon="circle-check">
+    Verified against Mojang and let in with **no password, no commands** —
+    carrying their real UUID and skin.
+  </Card>
+  <Card title="Everyone else" icon="key">
+    `/register` once, `/login` after that. Frozen in place until they do.
+  </Card>
+</CardGroup>
+
+## Why the UUID matters
+
+Plenty of plugins can wave a premium player through. Far fewer give them the
+**UUID Mojang actually issued them**.
+
+On an offline server the UUID is normally derived from the name, so "Notch" is
+whoever types `Notch` — and if you later switch the server to online mode,
+every permission, balance and ban is attached to the wrong identity. rLogin
+hands the connection the genuine profile it got back from Mojang, exactly as a
+proxy would, so your other plugins see the same UUID they would on any
+online-mode server.
+
+That is [`uuid-type: real`](/rlogin/features/premium-auth#uuid-type), and it is
+the default.
+
+<Note>
+  You can turn it off. Servers with an existing offline-mode world often prefer
+  `uuid-type: cracked`, which keeps everyone on the UUID they already have
+  while still skipping the password for premium players.
+</Note>
+
+## Where it runs
+
+<CardGroup cols={3}>
+  <Card title="Standalone" icon="server">
+    One Paper server, `online-mode: false`. rLogin does the Mojang verification
+    itself — this is the setup that needs
+    [PacketEvents](/rlogin/installation#packetevents).
+  </Card>
+  <Card title="Behind a proxy" icon="network-wired">
+    Velocity or BungeeCord. The proxy verifies, the backend trusts it. No
+    PacketEvents needed.
+  </Card>
+  <Card title="Folia" icon="layer-group">
+    Supported from day one. Every scheduled task uses the regional schedulers,
+    never Bukkit's global one.
+  </Card>
+</CardGroup>
+
+## What else is in the box
+
+<CardGroup cols={2}>
+  <Card title="17 languages" icon="language" href="/rlogin/configuration/messages">
+    Every message players see, translated and editable.
+  </Card>
+  <Card title="Two-factor auth" icon="shield-halved" href="/rlogin/features/security#two-factor-authentication">
+    TOTP through any authenticator app. Players opt in themselves.
+  </Card>
+  <Card title="Remember me" icon="clock-rotate-left" href="/rlogin/features/sessions">
+    A quick reconnect from the same address doesn't ask again.
+  </Card>
+  <Card title="Brute-force protection" icon="lock" href="/rlogin/features/security#brute-force-protection">
+    Escalating lockouts by address — never by account.
+  </Card>
+  <Card title="Spawn points" icon="location-dot" href="/rlogin/features/spawns">
+    Separate spawns for joining, first join, logging in and registering.
+  </Card>
+  <Card title="AuthMe import" icon="right-left" href="/rlogin/features/migrating">
+    Bring your existing accounts across, hashes included.
+  </Card>
+</CardGroup>
+
+## Get going
+
+<Card title="Installation" icon="download" href="/rlogin/installation" horizontal>
+  Two jars, one optional dependency, no configuration.
+</Card>

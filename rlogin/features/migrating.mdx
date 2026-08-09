@@ -1,0 +1,85 @@
+---
+title: "Migrating from AuthMe"
+description: "Bring existing accounts across, hashes included, without asking anyone to re-register."
+icon: "right-left"
+---
+
+```bash
+/rlogin migrate authme <path-or-jdbc-url>
+```
+
+Reads the other plugin's database directly and imports the accounts into
+rLogin's own. Players keep their passwords — there is nothing for them to do.
+
+## AuthMe
+
+<Tabs>
+  <Tab title="SQLite">
+    Point it at the file:
+
+    ```bash
+    /rlogin migrate authme plugins/AuthMe/authme.db
+    ```
+
+    A bare path is treated as SQLite automatically.
+  </Tab>
+  <Tab title="MySQL">
+    Give it a full JDBC URL:
+
+    ```bash
+    /rlogin migrate authme jdbc:mysql://127.0.0.1:3306/authme?user=root&password=secret
+    ```
+  </Tab>
+</Tabs>
+
+The importer reads `username`, `realname`, `password` and `ip` from the
+`authme` table, and derives each account's offline UUID from the name.
+
+### Which hashes carry over
+
+| AuthMe hash | Result |
+|---|---|
+| **bcrypt** (`$2a$`, `$2b$`, `$2y$`) | Works immediately. Players log in with their existing password. |
+| **AuthMe SHA-256** (`$SHA$salt$hash`) | Works immediately. rLogin verifies it and can re-hash to bcrypt on next login. |
+| Anything else (MD5, XAUTH, …) | The account is still imported, but that player must register again. |
+
+<Note>
+  Unsupported hashes are listed individually in the import log, so you know
+  exactly who to warn before you switch over.
+</Note>
+
+<Warning>
+  Import into an **empty** rLogin database. Accounts that already exist are not
+  overwritten, so a partial import can leave you with a confusing mix.
+</Warning>
+
+## nLogin and JPremium
+
+Not implemented yet. Running the command tells you so rather than failing
+halfway:
+
+```
+The nLogin importer isn't implemented yet (Phase 2).
+```
+
+<Card title="Contributions welcome" icon="code-pull-request" href="https://github.com/raimondarias/rlogin" horizontal>
+  `AuthMeImporter` is about eighty lines and is a fine reference to copy.
+</Card>
+
+## After importing
+
+<Steps>
+  <Step title="Check the log">
+    The console reports how many accounts were read, how many were imported, and
+    which hashes could not be carried across.
+  </Step>
+  <Step title="Decide on uuid-type">
+    Imported accounts use the **offline** UUID, matching what AuthMe used. If
+    you plan to run [`uuid-type: real`](/rlogin/features/premium-auth#uuid-type),
+    your premium players will arrive as new accounts — which is usually what you
+    want, but it is better to know beforehand.
+  </Step>
+  <Step title="Remove the old plugin">
+    Two authentication plugins running at once will fight over the same events.
+  </Step>
+</Steps>
