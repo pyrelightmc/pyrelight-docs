@@ -82,13 +82,21 @@
   "navbar": {
     "links": [
       {
+        "label": "Hangar",
+        "href": "https://hangar.papermc.io/Pyrelight/rlg"
+      },
+      {
+        "label": "Modrinth",
+        "href": "https://modrinth.com/plugin/rlg"
+      },
+      {
         "label": "Discord",
         "href": "https://discord.gg/5tuSrNRk3a"
       }
     ],
     "primary": {
       "type": "github",
-      "href": "https://github.com/pyrelightmc"
+      "href": "https://github.com/pyrelightmc/rlogin"
     }
   },
   "footer": {
