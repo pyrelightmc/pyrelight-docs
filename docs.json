@@ -3,19 +3,21 @@
   "theme": "almond",
   "name": "Pyrelight",
   "colors": {
-    "primary": "#ef7025",
-    "light": "#eec9bc",
-    "dark": "#4fa1ab"
+    "primary": "#e39fff",
+    "light": "#e39fff",
+    "dark": "#9b5de5"
   },
-  "favicon": "/favicon.svg",
+  "favicon": "/favicon.png",
   "logo": {
     "light": "/logo/light.svg",
     "dark": "/logo/dark.svg"
   },
   "navigation": {
-    "tabs": [
+    "dropdowns": [
       {
-        "tab": "rLogin",
+        "dropdown": "rLogin",
+        "icon": "door-open",
+        "description": "Premium auto-login and password authentication",
         "groups": [
           {
             "group": "Get Started",
@@ -63,7 +65,9 @@
         ]
       },
       {
-        "tab": "rPlugin",
+        "dropdown": "rPlugin",
+        "icon": "hourglass-half",
+        "description": "In development",
         "groups": [
           {
             "group": "Get Started",
@@ -89,7 +93,7 @@
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/pyrelightmc/rlogin",
+      "github": "https://github.com/pyrelightmc",
       "discord": "https://discord.gg/5tuSrNRk3a"
     }
   }
