@@ -27,7 +27,29 @@ The proxy is a connector. It does exactly two jobs:
   is known on the others. The proxy never reads or writes it.
 </Warning>
 
+<Warning>
+  **`velocity.toml` needs `online-mode = false`** for `auth-mode: auto` or
+  `offline`. With it on, rLogin refuses every connection and prints a banner
+  explaining why. See [what online-mode has to
+  be](/rlogin/installation#what-online-mode-has-to-be).
+</Warning>
+
 The file is `plugins/rlogin/config.yml` on the proxy.
+
+## auth-mode
+
+```yaml
+auth-mode: auto
+```
+
+Who this network is for. **Must match what your backends have**, or the proxy
+and the backends disagree about who gets in.
+
+| | |
+|---|---|
+| `auto` | Premium join without typing anything, everyone else with a password. Needs `online-mode = false`. |
+| `online` | Premium only. Here `online-mode = true` is the right setup. |
+| `offline` | Passwords only, nothing checked against Mojang. Needs `online-mode = false`. |
 
 ## login-servers
 
@@ -119,13 +141,19 @@ timing:
 
 <Steps>
   <Step title="velocity.toml">
-    `online-mode = true`, and Modern Forwarding configured as usual.
+    `online-mode = false`, and Modern Forwarding configured as usual.
+
+    This is not a typo. rLogin verifies each connection individually up here and
+    forces *that player* online or offline; with `online-mode = true` Velocity
+    has already dropped everyone without an account before rLogin sees them.
+    Under `auth-mode: online` the reverse applies — set it to `true` and let
+    Velocity do the work.
   </Step>
   <Step title="Each backend">
     `online-mode: false` in `server.properties`, with the forwarding secret in
     place. This is standard Velocity setup, not an rLogin requirement.
   </Step>
-  <Step title="rlogin-paper on every backend">
+  <Step title="The same jar on every backend">
     Including the auth server. The proxy has no accounts of its own.
   </Step>
 </Steps>

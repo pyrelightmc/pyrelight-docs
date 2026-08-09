@@ -28,6 +28,18 @@ icon: "circle-question"
     the requirement if you genuinely want passwords for everyone.
   </Accordion>
 
+  <Accordion title="Why won't rLogin start with online-mode on?" icon="triangle-exclamation">
+    Because with online-mode enabled, the server or proxy turns away every
+    player without a Minecraft account before rLogin is consulted. On
+    `auth-mode: auto` or `offline` — the modes that promise those players can
+    register — that is the entire audience gone, and nothing in the plugin can
+    bring them back.
+
+    Set `online-mode=false`, or set `auth-mode: online` if the server really is
+    premium-only. See [what online-mode has to
+    be](/rlogin/installation#what-online-mode-has-to-be).
+  </Accordion>
+
   <Accordion title="Do I need MySQL?" icon="database">
     Only if you run **more than one backend server**. Otherwise SQLite is the
     right answer and needs no configuration.

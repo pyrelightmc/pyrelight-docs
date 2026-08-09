@@ -18,7 +18,7 @@ rLogin prints one line at startup that answers most questions:
 |---|---|
 | `standalone-offline` | One server, `online-mode: false`. rLogin verifies premium itself and **needs PacketEvents**. |
 | `behind-proxy` | Proxy forwarding detected, so something upstream already verified. |
-| `online-mode` | The server verifies. Nobody is asked for a password. |
+| `online-mode` | The server verifies. Nobody is asked for a password — valid only with `auth-mode: online`. |
 
 If that line disagrees with your setup, the problem is upstream of rLogin — in
 `server.properties`, `config/paper-global.yml` or `spigot.yml`.
@@ -41,6 +41,25 @@ connection rather than silently downgrading every premium player to cracked.
 **Fix.** Install PacketEvents, or set
 [`auth-mode: offline`](/rlogin/configuration/config-file#auth-mode) if you want
 passwords for everyone.
+
+---
+
+## Nobody can connect: "online-mode is enabled"
+
+The console shows a banner saying rLogin cannot run, and every player is
+refused.
+
+**Cause.** `online-mode` is on while `auth-mode` is `auto` or `offline`. The
+server (or Velocity) rejects every player without a Minecraft account before
+rLogin is consulted, so the accounts those modes exist for can never arrive.
+
+**Fix.** Either set `online-mode=false` — in `server.properties` on a
+standalone server, `velocity.toml` on a proxy — or, if this really is a
+premium-only server, set `auth-mode: online` in rLogin's `config.yml`, which
+makes online-mode the correct setting rather than a contradiction.
+
+See [what online-mode has to
+be](/rlogin/installation#what-online-mode-has-to-be).
 
 ---
 

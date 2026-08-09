@@ -53,8 +53,13 @@ at startup and reports it in the console.
     offline. If they differ, somebody already did the verifying.
   </Tab>
   <Tab title="online-mode: true">
-    The server did it. Every connection is premium by definition and nobody is
-    ever asked for a password.
+    The server or proxy did it. Every connection is premium by definition and
+    nobody is ever asked for a password.
+
+    This only runs under `auth-mode: online`. On `auto` or `offline` rLogin
+    refuses to start with online-mode on, because it would be quietly turning
+    away the players those modes exist for — see [what online-mode has to
+    be](/rlogin/installation#what-online-mode-has-to-be).
   </Tab>
 </Tabs>
 

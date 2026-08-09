@@ -17,6 +17,27 @@ icon: "download"
   [GitHub Releases](https://github.com/raimondarias/rlogin/releases)
 </Card>
 
+## What online-mode has to be
+
+The single setting people get wrong. rLogin refuses every connection when these
+disagree, and says so in the console — a silent half-working server is worse
+than one that won't start.
+
+| Your `auth-mode` | Standalone `server.properties` | Velocity `velocity.toml` | PacketEvents |
+|---|---|---|---|
+| `auto` (default) | `online-mode=false` | `online-mode = false` | Standalone only |
+| `offline` | `online-mode=false` | `online-mode = false` | Never |
+| `online` | `online-mode=true` | `online-mode = true` | Never |
+
+<Note>
+  The logic is one sentence: **with online-mode on, the server or proxy turns
+  away every player without a Minecraft account before rLogin is consulted at
+  all.** On a network built for those players, that is the whole audience gone,
+  so `auto` and `offline` require it off. `auth-mode: online` is the one case
+  where turning them away is the point, and there online-mode does the job for
+  free.
+</Note>
+
 ## One jar, both platforms
 
 There is a single download: **`rLogin-<version>.jar`**. The same file goes into
@@ -64,8 +85,9 @@ One Paper server, no proxy, `online-mode: false` in `server.properties`.
     and has Velocity Modern Forwarding configured as usual.
   </Step>
   <Step title="Install the same jar on the proxy">
-    Drop it into Velocity's `plugins/`. The proxy runs `online-mode: true` in
-    `velocity.toml`.
+    Drop it into Velocity's `plugins/`, and set `online-mode = false` in
+    `velocity.toml` — rLogin decides per player up there, which it cannot do if
+    Velocity has already turned the non-premium ones away.
   </Step>
   <Step title="Point the backends at one database">
     Only needed if you have **more than one** backend — otherwise an account
@@ -91,11 +113,19 @@ One Paper server, no proxy, `online-mode: false` in `server.properties`.
   login, so players are asked again on every server switch.
 </Warning>
 
-## Online-mode server
+## Premium-only server
 
-Put the jar in `plugins/` and start. Every player is premium by definition, so
-nobody is ever asked for a password — rLogin is there for the spawn points, the
-messages and `/rlogin` administration.
+Set `auth-mode: online` in rLogin's `config.yml`, keep `online-mode` on, and
+start. Every player is premium by definition, so nobody is ever asked for a
+password — rLogin is there for the spawn points, the messages, two-factor
+authentication on top of premium, and `/rlogin` administration.
+
+<Note>
+  `auth-mode: online` is what makes online-mode the correct setting rather than
+  a contradiction. Leave it on the default `auto` and rLogin will refuse every
+  connection, because `auto` promises non-premium players a way in that
+  online-mode has already taken away.
+</Note>
 
 ## PacketEvents
 
