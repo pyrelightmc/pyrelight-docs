@@ -14,14 +14,19 @@ is no switch to find and forget.
   keys are appended. The console tells you which ones were added.
 </Note>
 
-## auth-mode
-
-The one decision worth making consciously. Everything below it has a sensible
-default.
+## general
 
 ```yaml
-auth-mode: auto
+general:
+  auth-mode: auto
+  language: en
+  debug: false
 ```
+
+### auth-mode
+
+The one decision worth making consciously. Everything else has a sensible
+default.
 
 <Tabs>
   <Tab title="auto">
@@ -48,13 +53,7 @@ auth-mode: auto
   </Tab>
 </Tabs>
 
-## general
-
-```yaml
-general:
-  language: en
-  debug: false
-```
+### language and debug
 
 | Setting | Default | What it does |
 |---|---|---|
