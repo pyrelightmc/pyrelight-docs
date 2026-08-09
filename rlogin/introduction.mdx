@@ -4,6 +4,8 @@ description: "Premium players join without typing anything. Everyone else logs i
 icon: "door-open"
 ---
 
+<img src="/images/rlogin.svg" alt="rLogin" width="96" height="96" noZoom />
+
 Most authentication plugins make you pick a side. Run `online-mode: true` and
 every player without a Minecraft account is turned away. Run offline and you
 have to ask *everybody* for a password — including the people who already own
@@ -52,8 +54,8 @@ the default.
     [PacketEvents](/rlogin/installation#packetevents).
   </Card>
   <Card title="Behind a proxy" icon="network-wired">
-    Velocity or BungeeCord. The proxy verifies, the backend trusts it. No
-    PacketEvents needed.
+    Velocity verifies, the backend trusts it. No PacketEvents needed —
+    the same jar runs on the proxy.
   </Card>
   <Card title="Folia" icon="layer-group">
     Supported from day one. Every scheduled task uses the regional schedulers,

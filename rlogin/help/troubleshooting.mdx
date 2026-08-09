@@ -17,7 +17,7 @@ rLogin prints one line at startup that answers most questions:
 | Value | Meaning |
 |---|---|
 | `standalone-offline` | One server, `online-mode: false`. rLogin verifies premium itself and **needs PacketEvents**. |
-| `behind-proxy` | Velocity or BungeeCord forwarding detected. The proxy verifies. |
+| `behind-proxy` | Proxy forwarding detected, so something upstream already verified. |
 | `online-mode` | The server verifies. Nobody is asked for a password. |
 
 If that line disagrees with your setup, the problem is upstream of rLogin — in
@@ -49,8 +49,9 @@ passwords for everyone.
 <AccordionGroup>
   <Accordion title="Check the Setup line first" icon="magnifying-glass">
     If it says `behind-proxy` but you have no proxy, something in
-    `paper-global.yml` or `spigot.yml` has forwarding enabled. rLogin is trusting
-    a proxy that is not there, so nothing ever verifies the connection.
+    `paper-global.yml` (`proxies.velocity.enabled`) or `spigot.yml`
+    (`settings.bungeecord`) has forwarding enabled. rLogin is trusting a proxy
+    that is not there, so nothing ever verifies the connection.
   </Accordion>
   <Accordion title="premium.auto-login is false" icon="toggle-off">
     Or `auth-mode` is `offline`, which turns Mojang verification off entirely.
@@ -89,10 +90,11 @@ To avoid it entirely on an existing offline server, use `uuid-type: cracked`.
 
 ## Players are asked to log in on every server switch
 
-**Cause.** `rlogin-velocity` is not installed on the proxy, so each backend
+**Cause.** rLogin is not installed on the proxy itself, so each backend
 decides independently.
 
-**Fix.** Install it, and list your auth server in `login-servers.servers`. See
+**Fix.** Drop the same `rLogin-<version>.jar` into the proxy's `plugins/`, and
+list your auth server in `login-servers.servers`. See
 [Proxy setup](/rlogin/configuration/proxy).
 
 ---

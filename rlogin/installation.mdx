@@ -1,6 +1,6 @@
 ---
 title: "Installation"
-description: "Two jars, one conditional dependency, and nothing to configure."
+description: "One jar, one conditional dependency, and nothing to configure."
 icon: "download"
 ---
 
@@ -12,17 +12,27 @@ icon: "download"
 | **Minecraft** | 1.21 or newer |
 | **Java** | 21 or newer |
 
-<Card title="Download rLogin" icon="download" href="https://modrinth.com/plugin/rlogin" horizontal>
+<Card title="Download rLogin" icon="download" href="https://modrinth.com/plugin/rlg" horizontal>
   Modrinth · also on [Hangar](https://hangar.papermc.io/raimondarias/rlg) and
   [GitHub Releases](https://github.com/raimondarias/rlogin/releases)
 </Card>
 
-There are two jars, and which ones you need depends on your setup:
+## One jar, both platforms
 
-- **`rlogin-paper.jar`** — goes on every Paper/Folia server. This is where
-  accounts, passwords and the database live.
-- **`rlogin-velocity.jar`** — only if you run a Velocity proxy. It routes
-  players and reports logins; it never touches the database.
+There is a single download: **`rLogin-<version>.jar`**. The same file goes into
+a Paper or Folia server's `plugins/` folder *and* into a Velocity proxy's — you
+do not pick a build, and there is no separate proxy download.
+
+<Accordion title="How one jar runs on two platforms" icon="box-open">
+  Paper and Velocity find their entry point in completely different ways that do
+  not collide. Paper reads `plugin.yml` at the jar root and reflectively loads
+  the class named there. Velocity reads `velocity-plugin.json`, emitted at
+  compile time from the annotated class, and loads only what that descriptor
+  names.
+
+  Neither platform's API is bundled, so each side only ever touches its own half
+  — the Velocity classes are simply never loaded on Paper, and vice versa.
+</Accordion>
 
 ## Standalone server
 
@@ -34,7 +44,7 @@ One Paper server, no proxy, `online-mode: false` in `server.properties`.
     in `plugins/`. See [why](#packetevents) below.
   </Step>
   <Step title="Install rLogin">
-    Put `rlogin-paper.jar` in `plugins/` as well.
+    Put `rLogin-<version>.jar` in `plugins/` as well.
   </Step>
   <Step title="Start the server">
     That's it. Premium verification turns itself on because it detected the one
@@ -49,12 +59,13 @@ One Paper server, no proxy, `online-mode: false` in `server.properties`.
 ## Behind a Velocity proxy
 
 <Steps>
-  <Step title="Install rlogin-paper on every backend">
-    Each backend keeps `online-mode: false` and has Velocity Modern Forwarding
-    configured as usual.
+  <Step title="Install rLogin on every backend">
+    The same jar in each backend's `plugins/`. Each keeps `online-mode: false`
+    and has Velocity Modern Forwarding configured as usual.
   </Step>
-  <Step title="Install rlogin-velocity on the proxy">
-    The proxy runs `online-mode: true` in `velocity.toml`.
+  <Step title="Install the same jar on the proxy">
+    Drop it into Velocity's `plugins/`. The proxy runs `online-mode: true` in
+    `velocity.toml`.
   </Step>
   <Step title="Point the backends at one database">
     Only needed if you have **more than one** backend — otherwise an account
@@ -74,11 +85,17 @@ One Paper server, no proxy, `online-mode: false` in `server.properties`.
   pointless.
 </Note>
 
+<Warning>
+  Velocity is the only proxy with an rLogin plugin. A backend behind BungeeCord
+  will *detect* the forwarding and not verify twice — but nothing routes the
+  login, so players are asked again on every server switch.
+</Warning>
+
 ## Online-mode server
 
-Put `rlogin-paper.jar` in `plugins/` and start. Every player is premium by
-definition, so nobody is ever asked for a password — rLogin is there for the
-spawn points, the messages and `/rlogin` administration.
+Put the jar in `plugins/` and start. Every player is premium by definition, so
+nobody is ever asked for a password — rLogin is there for the spawn points, the
+messages and `/rlogin` administration.
 
 ## PacketEvents
 
