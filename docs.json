@@ -83,12 +83,12 @@
     ],
     "primary": {
       "type": "github",
-      "href": "https://github.com/raimondarias/rlogin"
+      "href": "https://github.com/pyrelightmc/rlogin"
     }
   },
   "footer": {
     "socials": {
-      "github": "https://github.com/raimondarias/rlogin",
+      "github": "https://github.com/pyrelightmc/rlogin",
       "discord": "https://discord.gg/5tuSrNRk3a"
     }
   }

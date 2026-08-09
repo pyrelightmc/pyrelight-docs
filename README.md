@@ -44,5 +44,5 @@ a setting documented here should be findable in that plugin's source.
 
 | | |
 |---|---|
-| rLogin | [github.com/raimondarias/rlogin](https://github.com/raimondarias/rlogin) |
+| rLogin | [github.com/pyrelightmc/rlogin](https://github.com/pyrelightmc/rlogin) |
 | Discord | [discord.gg/5tuSrNRk3a](https://discord.gg/5tuSrNRk3a) |

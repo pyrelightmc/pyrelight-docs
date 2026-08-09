@@ -11,6 +11,21 @@ icon: "download"
 | **Server** | Paper, Folia or Velocity |
 | **Minecraft** | 1.21 or newer |
 | **Java** | 21 or newer |
+| **Velocity** | 3.x and 4.x both work |
+
+<Accordion title="Why the jar is built against the Velocity 3 API" icon="code-branch">
+  It runs on Velocity 4 regardless: every API rLogin touches — `PreLoginEvent`
+  and its `forceOnlineMode`/`forceOfflineMode` results, `ServerPostConnectEvent`
+  and `getPreviousServer`, plugin messaging, `isOnlineMode` — is unchanged
+  between the two, and Velocity 4 still reads the same `velocity-plugin.json`
+  descriptor.
+
+  Building *against* the version 4 API is a different matter: its class files
+  target **Java 25**, and rLogin ships as one jar shared with the Paper half,
+  where Java 21 is still what most servers run. Compiling against it would drop
+  every Java 21 server to gain nothing, since the calls are identical either
+  way.
+</Accordion>
 
 ## Download
 
@@ -21,7 +36,7 @@ icon: "download"
   <Card title="Modrinth" icon="box" href="https://modrinth.com/plugin/rlg">
     Coming soon: the project is still awaiting review.
   </Card>
-  <Card title="GitHub Releases" icon="github" href="https://github.com/raimondarias/rlogin/releases">
+  <Card title="GitHub Releases" icon="github" href="https://github.com/pyrelightmc/rlogin/releases">
     Every version, with its changelog and source.
   </Card>
 </CardGroup>
