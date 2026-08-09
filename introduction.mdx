@@ -1,0 +1,75 @@
+---
+title: "rLogin: Minecraft Auth for Premium & Cracked Players"
+sidebarTitle: "Introduction"
+description: "rLogin by Pyrelight is a Minecraft authentication plugin that supports both premium and non-premium (cracked) players on the same server."
+---
+
+rLogin is Pyrelight's authentication plugin for Minecraft servers. It lets you run a server that accepts both premium (official Mojang/Microsoft account) players and non-premium (cracked) players, keeping everyone's account secure through smart, automatic login handling.
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get rLogin running on your server in minutes
+  </Card>
+  <Card title="Installation" icon="download" href="/installation">
+    Detailed installation steps for your server type
+  </Card>
+  <Card title="Configuration" icon="gear" href="/configuration/config-file">
+    Customize rLogin to fit your server's needs
+  </Card>
+  <Card title="Commands" icon="terminal" href="/reference/commands">
+    Full reference for player and admin commands
+  </Card>
+</CardGroup>
+
+## What rLogin Does
+
+When a player joins your server, rLogin automatically determines whether they are a premium or non-premium account and handles authentication accordingly:
+
+- **Premium players** are verified against Mojang's session servers automatically — no password needed.
+- **Non-premium players** register a password on their first join and use it to log in on every subsequent visit.
+
+This means your players get a seamless experience regardless of whether they own the official game, and you don't have to run separate servers for each group.
+
+## Key Features
+
+<CardGroup cols={2}>
+  <Card title="Dual Auth" icon="shield-check">
+    Supports premium and cracked players on the same server simultaneously
+  </Card>
+  <Card title="Auto Login" icon="bolt">
+    Premium players are logged in automatically via Mojang verification
+  </Card>
+  <Card title="Session Persistence" icon="clock">
+    Players can stay logged in between sessions to reduce friction
+  </Card>
+  <Card title="Flexible Database" icon="database">
+    Store player data in SQLite (default) or MySQL
+  </Card>
+  <Card title="Custom Messages" icon="message">
+    Fully customizable in-game messages and prompts
+  </Card>
+  <Card title="Admin Controls" icon="user-shield">
+    Force login, unregister players, and reload config without restarting
+  </Card>
+</CardGroup>
+
+## How It Works
+
+<Steps>
+  <Step title="Player Joins">
+    A player connects to your server. rLogin intercepts the connection and checks whether their username corresponds to a premium Minecraft account.
+  </Step>
+  <Step title="Premium Check">
+    If the account is premium, rLogin performs Mojang session verification automatically. The player is logged in without any action required on their part.
+  </Step>
+  <Step title="Non-Premium Flow">
+    If the account is non-premium, rLogin checks whether the player has previously registered. New players are prompted to register with `/register`; returning players are prompted to `/login`.
+  </Step>
+  <Step title="Access Granted">
+    Once authenticated, the player gains full access to your server. Until authentication is complete, player movement and commands are restricted.
+  </Step>
+</Steps>
+
+<Tip>
+  Need help setting up rLogin? Join the [Pyrelight Discord](https://discord.gg/pyrelight) for community support.
+</Tip>

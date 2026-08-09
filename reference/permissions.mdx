@@ -1,0 +1,103 @@
+---
+title: "rLogin Permission Nodes: Complete Server Admin Reference"
+sidebarTitle: "Permissions"
+description: "Complete reference for all rLogin permission nodes — control player authentication commands and grant granular admin access to server staff."
+---
+
+rLogin uses Bukkit permissions to control who can run each command. Assign these nodes in your permissions plugin (LuckPerms, PermissionsEx, etc.) to give specific players or groups access to the commands they need.
+
+## Permission Nodes
+
+The table below lists every permission node rLogin registers, its default value, and what it controls.
+
+| Permission | Default | Description |
+|---|---|---|
+| `rlogin.register` | `true` | Allows using `/register` |
+| `rlogin.login` | `true` | Allows using `/login` |
+| `rlogin.logout` | `true` | Allows using `/logout` |
+| `rlogin.changepassword` | `true` | Allows using `/changepassword` |
+| `rlogin.admin` | `op` | Grants access to all `/rlogin` admin subcommands |
+| `rlogin.admin.reload` | `op` | Allows `/rlogin reload` specifically |
+| `rlogin.admin.unregister` | `op` | Allows `/rlogin unregister` specifically |
+| `rlogin.admin.forcelogin` | `op` | Allows `/rlogin forcelogin` specifically |
+| `rlogin.bypass` | `op` | Bypasses authentication entirely — the player is treated as logged in automatically |
+
+<Note>
+  `rlogin.admin` is a parent permission that grants all `rlogin.admin.*` sub-permissions. You only need to assign `rlogin.admin` to give a staff member full admin access; you do not need to assign each subcommand permission individually.
+</Note>
+
+<Tip>
+  Use `rlogin.bypass` carefully. Any player with this permission skips all authentication checks entirely and is considered logged in the moment they join. Restrict it to trusted admin accounts only.
+</Tip>
+
+---
+
+## Granting Permissions with LuckPerms
+
+LuckPerms is the most widely used permissions plugin on Bukkit-based servers. Use the commands below to assign rLogin permissions to individual players or groups.
+
+### Assign to a specific player
+
+```bash
+/lp user Steve permission set rlogin.admin true
+```
+
+### Assign to a group (e.g. a staff group)
+
+```bash
+/lp group staff permission set rlogin.admin true
+```
+
+### Grant bypass to an admin account
+
+```bash
+/lp user AdminName permission set rlogin.bypass true
+```
+
+### Grant a specific admin subcommand only
+
+If you want a staff role to run `/rlogin unregister` but not other admin commands, assign the specific node instead of the parent:
+
+```bash
+/lp group moderator permission set rlogin.admin.unregister true
+```
+
+---
+
+## Permission Node Details
+
+<AccordionGroup>
+  <Accordion title="rlogin.register / rlogin.login / rlogin.logout / rlogin.changepassword">
+    These four nodes are granted to all players by default (`default: true`). You do not need to assign them manually in your permissions plugin unless you want to restrict certain players from using those commands.
+
+    Revoking `rlogin.register` from a group would prevent those players from creating an account — use this only if you have a specific reason to block registration for a subset of players.
+  </Accordion>
+
+  <Accordion title="rlogin.admin — Full Admin Access">
+    Grants access to all `/rlogin` subcommands at once:
+
+    - `/rlogin reload`
+    - `/rlogin unregister <player>`
+    - `/rlogin forcelogin <player>`
+
+    Assign this to trusted server staff or administrators. It defaults to server operators (`op`) and must be explicitly granted in your permissions plugin to non-op users.
+  </Accordion>
+
+  <Accordion title="rlogin.admin.reload / .unregister / .forcelogin — Granular Admin Control">
+    Use the individual `rlogin.admin.*` nodes when you want to give a staff role access to only specific admin commands. For example, you might allow moderators to unregister players but not force-login them.
+
+    | Node | Command Unlocked |
+    |---|---|
+    | `rlogin.admin.reload` | `/rlogin reload` |
+    | `rlogin.admin.unregister` | `/rlogin unregister <player>` |
+    | `rlogin.admin.forcelogin` | `/rlogin forcelogin <player>` |
+  </Accordion>
+
+  <Accordion title="rlogin.bypass — Skip All Authentication">
+    Players with `rlogin.bypass` are automatically treated as authenticated when they join. They will never see login prompts, and movement is never blocked for them.
+
+    <Warning>
+      Granting `rlogin.bypass` to the wrong account creates a significant security risk. Any player with this permission can join without a password, even on an offline-mode server. Only assign it to dedicated admin accounts that you fully control.
+    </Warning>
+  </Accordion>
+</AccordionGroup>

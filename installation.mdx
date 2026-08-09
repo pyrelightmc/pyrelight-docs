@@ -1,0 +1,157 @@
+---
+title: "Installing rLogin on Your Spigot or Paper Minecraft Server"
+sidebarTitle: "Installation"
+description: "Step-by-step guide to installing rLogin on Spigot, Paper, or Purpur servers. Covers download, placement, server compatibility, and first-run setup."
+---
+
+This page covers everything you need to know to install rLogin on your Minecraft server — from verifying compatibility and downloading the plugin, to confirming a successful first run. Whether you are setting up a fresh server or adding rLogin to an existing one, follow the sections below in order.
+
+## Requirements
+
+Before installing rLogin, confirm your server environment meets the following requirements.
+
+| Requirement | Details |
+|---|---|
+| **Server software** | Spigot 1.8+, Paper 1.8+, or Purpur 1.8+ |
+| **Java version** | Java 8 or higher |
+| **API** | Bukkit API (required) |
+
+<Info>
+  **Paper is the recommended server software.** It includes performance optimisations and async event handling that allow rLogin to process authentication faster than stock Spigot.
+</Info>
+
+<Warning>
+  rLogin is **not compatible** with Vanilla, Forge, or Fabric servers. It relies exclusively on the Bukkit plugin API and will not load on any server that does not implement it.
+</Warning>
+
+## Downloading rLogin
+
+Download the latest `rLogin.jar` from one of the official distribution channels:
+
+- **GitHub Releases** — [github.com/rIgnacio/rLogin/releases](https://github.com/rIgnacio/rLogin/releases)
+- **SpigotMC Resource Page** — available on the Pyrelight SpigotMC profile
+
+<Note>
+  Always download the **latest release**. Older versions may contain unpatched security vulnerabilities or bugs that have since been fixed. Avoid using builds from unofficial sources.
+</Note>
+
+## Installation Steps
+
+<Steps>
+  <Step title="Stop your server">
+    If your server is currently running, shut it down cleanly before making any changes to the `plugins/` directory.
+
+    ```bash
+    # From the server console
+    stop
+    ```
+
+    Wait for the process to exit fully before proceeding.
+  </Step>
+
+  <Step title="Navigate to your plugins directory">
+    Open your server's root directory and locate the `plugins/` folder. This folder sits alongside `server.properties`, `bukkit.yml`, and your world folders.
+
+    ```bash
+    # Example structure
+    server/
+    ├── plugins/        ← place rLogin.jar here
+    ├── world/
+    ├── server.properties
+    └── spigot.jar
+    ```
+  </Step>
+
+  <Step title="Copy rLogin.jar into the plugins folder">
+    Move or copy the downloaded `rLogin.jar` file into the `plugins/` directory.
+
+    ```bash
+    # Linux / macOS example
+    cp ~/Downloads/rLogin.jar /path/to/server/plugins/
+
+    # Windows example (PowerShell)
+    Copy-Item "$HOME\Downloads\rLogin.jar" "C:\servers\myserver\plugins\"
+    ```
+  </Step>
+
+  <Step title="Start your server">
+    Start your server normally. During startup, rLogin initialises and creates the following files inside `plugins/rLogin/`:
+
+    ```
+    plugins/rLogin/
+    ├── config.yml       — main plugin configuration
+    ├── messages.yml     — all player-facing messages (editable)
+    └── rlogin.db        — SQLite database (default; holds player auth data)
+    ```
+
+    <Note>
+      The `plugins/rLogin/` folder and all its contents are generated automatically on first run. You do not need to create them manually.
+    </Note>
+  </Step>
+
+  <Step title="Verify the installation">
+    Confirm rLogin loaded successfully using either of these methods:
+
+    **Console output** — look for this line in your startup log:
+
+    ```
+    [rLogin] Plugin enabled successfully.
+    ```
+
+    **In-game command** — join the server as an operator and run:
+
+    ```bash
+    /rlogin
+    ```
+
+    This will print the rLogin help menu, confirming the plugin is active.
+  </Step>
+</Steps>
+
+<Warning>
+  Do **not** run rLogin alongside other authentication plugins such as AuthMe, nLogin, FastLogin, or similar. These plugins manage the same login lifecycle events and will conflict with rLogin, causing duplicate prompts, bypassed authentication, or server errors. Remove any other auth plugins before installing rLogin.
+</Warning>
+
+## Updating rLogin
+
+When a new version of rLogin is released, update it with these steps:
+
+<Steps>
+  <Step title="Stop the server">
+    Run `stop` in the console and wait for the process to exit.
+  </Step>
+  <Step title="Replace the JAR file">
+    Delete the old `rLogin.jar` from `plugins/` and copy the new version in its place. Do **not** delete the `plugins/rLogin/` folder — it contains your configuration and player data.
+  </Step>
+  <Step title="Restart the server">
+    Start the server again. rLogin will apply any configuration updates required by the new version on startup.
+  </Step>
+</Steps>
+
+## Uninstalling rLogin
+
+To remove rLogin from your server:
+
+<Steps>
+  <Step title="Stop the server">
+    Run `stop` in the console and wait for the process to exit.
+  </Step>
+  <Step title="Delete the plugin JAR">
+    Remove `rLogin.jar` from the `plugins/` directory.
+  </Step>
+  <Step title="Optionally remove plugin data">
+    If you want to erase all rLogin configuration and player authentication data, delete the entire `plugins/rLogin/` folder.
+
+    ```bash
+    # Linux / macOS
+    rm -rf /path/to/server/plugins/rLogin/
+
+    # Windows (PowerShell)
+    Remove-Item -Recurse -Force "C:\servers\myserver\plugins\rLogin\"
+    ```
+
+    <Warning>
+      Deleting `plugins/rLogin/` permanently removes all registered player passwords and authentication records. This action cannot be undone. Back up the folder if you may need to restore it later.
+    </Warning>
+  </Step>
+</Steps>

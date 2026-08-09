@@ -1,0 +1,80 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "almond",
+  "name": "rLogin",
+  "colors": {
+    "primary": "#ef7025",
+    "light": "#eec9bc",
+    "dark": "#4fa1ab"
+  },
+  "favicon": "/favicon.svg",
+  "logo": {
+    "light": "/logo/light.svg",
+    "dark": "/logo/dark.svg"
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/config-file",
+              "configuration/database",
+              "configuration/messages"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/premium-auth",
+              "features/cracked-auth",
+              "features/session-management",
+              "features/security"
+            ]
+          },
+          {
+            "group": "Commands & Permissions",
+            "pages": [
+              "reference/commands",
+              "reference/permissions"
+            ]
+          },
+          {
+            "group": "Help",
+            "pages": [
+              "help/faq",
+              "help/troubleshooting"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "navbar": {
+    "links": [
+      {
+        "label": "Support",
+        "href": "https://discord.gg/pyrelight"
+      }
+    ],
+    "primary": {
+      "type": "github",
+      "href": "https://github.com/pyrelight"
+    }
+  },
+  "footer": {
+    "socials": {
+      "github": "https://github.com/pyrelight"
+    }
+  }
+}

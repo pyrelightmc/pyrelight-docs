@@ -1,0 +1,154 @@
+---
+title: "rLogin Command Reference: Players and Server Admins"
+sidebarTitle: "Commands"
+description: "Complete reference for all rLogin commands — register, login, logout, changepassword, reload, unregister, and forcelogin with usage examples."
+---
+
+rLogin provides commands for both players and server administrators. Player commands handle authentication; admin commands let you manage accounts and reload configuration without restarting the server.
+
+## Player Commands
+
+Non-premium (cracked) players use these commands to register, log in, and manage their accounts. Premium players are authenticated automatically via Mojang's session servers and do not need to run `/register` or `/login`.
+
+<Tip>
+  Premium players do not need to run `/login` — rLogin authenticates them automatically via Mojang's session servers when they join.
+</Tip>
+
+| Command | Usage | Description |
+|---|---|---|
+| `/register` | `/register <password> <confirmPassword>` | Register a new account. Non-premium players only; required on first join. |
+| `/login` | `/login <password>` | Log in with your registered password. Required each session for non-premium players. |
+| `/logout` | `/logout` | Log out of your current session. |
+| `/changepassword` | `/changepassword <oldPassword> <newPassword>` | Change your account password. You must be logged in first. |
+
+### Command Details
+
+<AccordionGroup>
+  <Accordion title="/register — Create Your Account">
+    Run `/register` on your first join to create an account. You must type your chosen password twice to confirm it.
+
+    ```text
+    /register <password> <confirmPassword>
+    ```
+
+    **Example:**
+    ```text
+    /register MySecret123 MySecret123
+    ```
+
+    - Only non-premium players need to register.
+    - Both passwords must match exactly.
+    - You will be automatically logged in after a successful registration.
+  </Accordion>
+
+  <Accordion title="/login — Log In to Your Account">
+    Run `/login` each time you join the server. You will not be able to interact with the world until you log in.
+
+    ```text
+    /login <password>
+    ```
+
+    **Example:**
+    ```text
+    /login MySecret123
+    ```
+
+    - You must have already registered with `/register` before you can log in.
+    - If you forget your password, ask a server administrator to unregister your account so you can re-register.
+  </Accordion>
+
+  <Accordion title="/logout — End Your Session">
+    Run `/logout` to manually end your authenticated session. After logging out, you will need to run `/login` again to interact with the server.
+
+    ```text
+    /logout
+    ```
+
+    - Logging out does not delete your account or password.
+    - Your session ends immediately and you will be prompted to log in again before you can move or interact.
+  </Accordion>
+
+  <Accordion title="/changepassword — Update Your Password">
+    Run `/changepassword` to set a new password for your account. You must provide your current password to confirm your identity.
+
+    ```text
+    /changepassword <oldPassword> <newPassword>
+    ```
+
+    **Example:**
+    ```text
+    /changepassword MySecret123 NewPassword456
+    ```
+
+    - You must be logged in to change your password.
+    - Choose a strong, unique password and do not share it with others.
+  </Accordion>
+</AccordionGroup>
+
+---
+
+## Admin Commands
+
+Admin commands are available under the `/rlogin` namespace. Use them to manage player accounts and reload the plugin configuration without restarting your server.
+
+<Note>
+  All `/rlogin` subcommands require the `rlogin.admin` permission or the corresponding granular node. See the [Permissions reference](/reference/permissions) for details on granting access to staff members.
+</Note>
+
+| Command | Usage | Description |
+|---|---|---|
+| `/rlogin reload` | `/rlogin reload` | Reload `config.yml` and `messages.yml` without restarting the server. |
+| `/rlogin unregister` | `/rlogin unregister <player>` | Delete a player's registered account, allowing them to re-register. |
+| `/rlogin forcelogin` | `/rlogin forcelogin <player>` | Force a player into an authenticated state without requiring their password. |
+
+### Command Details
+
+<AccordionGroup>
+  <Accordion title="/rlogin reload — Apply Config Changes Live">
+    Reload rLogin's configuration and messages files without restarting the server. This applies any changes you have made to `config.yml` or `messages.yml` immediately.
+
+    ```text
+    /rlogin reload
+    ```
+
+    - Always validate your YAML syntax before reloading to avoid errors.
+    - If changes still do not take effect after reloading, restart the server to ensure a clean state.
+  </Accordion>
+
+  <Accordion title="/rlogin unregister — Remove a Player Account">
+    Delete a player's registered account from the database. The player will be able to register a new account with `/register` on their next login.
+
+    ```text
+    /rlogin unregister <player>
+    ```
+
+    **Example:**
+    ```text
+    /rlogin unregister Steve
+    ```
+
+    <Warning>
+      This action is irreversible. The player's stored password will be permanently deleted. Use this command to help players who have forgotten their password.
+    </Warning>
+
+    - The player name is case-sensitive. Use the exact username.
+    - If the player is currently online, their session will also be terminated.
+  </Accordion>
+
+  <Accordion title="/rlogin forcelogin — Authenticate a Player Manually">
+    Force a specific online player into an authenticated state without requiring them to enter a password. This is useful for administrative intervention or testing.
+
+    ```text
+    /rlogin forcelogin <player>
+    ```
+
+    **Example:**
+    ```text
+    /rlogin forcelogin Steve
+    ```
+
+    <Warning>
+      Use this command with caution. Force-logging in a player bypasses their password entirely. Only use it on players you have already verified through other means.
+    </Warning>
+  </Accordion>
+</AccordionGroup>

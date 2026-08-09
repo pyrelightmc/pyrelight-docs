@@ -1,0 +1,87 @@
+---
+title: "Security Features and Best Practices for rLogin Servers"
+sidebarTitle: "Security"
+description: "rLogin shields accounts with BCrypt hashing, brute-force limits, username theft prevention, and interaction lockdowns for unauthenticated players."
+---
+
+rLogin includes several layers of security to protect player accounts and prevent unauthorized access on your server. From password hashing and brute-force prevention to username theft protection and movement restrictions, each feature addresses a specific attack vector that open or mixed-mode Minecraft servers face. Understanding these protections helps you configure rLogin effectively and keep your players' accounts safe.
+
+## BCrypt Password Hashing
+
+All non-premium player passwords are hashed using the BCrypt algorithm before being written to the database. BCrypt is a deliberately slow hashing function, which makes large-scale brute-force attacks computationally expensive even if an attacker obtains your database.
+
+```yaml
+bcrypt-rounds: 10  # Default: 10 — increase for stronger (but slower) hashing
+```
+
+- Passwords are **never stored in plain text** at any point.
+- The `bcrypt-rounds` value controls the cost factor. Each increment roughly doubles the time required to compute a hash. A value of `10` is a reasonable default for most servers.
+- Higher values (e.g., `12`) provide stronger resistance against offline brute-force attacks at the cost of slightly longer login times.
+
+<Info>
+  Even if your database is compromised, attackers only obtain BCrypt hashes — not raw passwords. Players who reuse passwords elsewhere are still protected.
+</Info>
+
+## Brute-Force Protection
+
+rLogin tracks failed login attempts per player and kicks anyone who exceeds the configured threshold. This prevents automated tools from cycling through password guesses on a live connection.
+
+```yaml
+max-login-attempts: 5  # Kick the player after this many consecutive failures
+```
+
+After being kicked, the player must reconnect and authenticate successfully within the login timeout window. You can lower this value for tighter security or raise it slightly if your players frequently mistype passwords.
+
+## Login Timeout
+
+Unauthenticated players are kicked automatically if they do not log in within the configured number of seconds. This prevents someone from joining and sitting in an unauthenticated state indefinitely — which could otherwise be used to occupy a player slot or probe server behaviour.
+
+```yaml
+login-timeout: 60  # Kick unauthenticated players after 60 seconds
+```
+
+Reduce this value on high-traffic servers to free up slots faster. Increase it slightly if your players consistently need more time to type their passwords.
+
+## Username Theft Prevention
+
+On mixed (offline-mode) servers, a non-premium player could attempt to join using the same username as a premium player. Without protection, this would let them impersonate that premium account. rLogin prevents this entirely:
+
+```yaml
+prevent-username-steal: true  # Block non-premium players from using premium usernames
+```
+
+When enabled, rLogin checks whether a connecting non-premium player's username belongs to a verified Mojang account. If it does, the non-premium player is kicked. The premium player can only join using their verified Microsoft account.
+
+## Movement and Interaction Restrictions
+
+Until a non-premium player completes authentication, rLogin enforces a full lockdown on their session:
+
+- **Movement** is blocked — the player cannot walk, jump, or fall.
+- **Chat** is disabled — the player cannot send messages to other players.
+- **Commands** are blocked — with the exception of `/login` and `/register`.
+- **World interaction** is prevented — the player cannot break blocks, open containers, or interact with entities.
+
+This ensures that an unauthenticated player has zero impact on the server state while they are logging in.
+
+## Recommended Server Hardening
+
+<Note>
+  Applying the following practices alongside rLogin significantly reduces your overall attack surface:
+
+  - **Keep rLogin updated.** New releases patch security vulnerabilities and improve compatibility. Always run the latest version.
+  - **Use a firewall.** Restrict your server port to expected traffic and block unused ports at the host or OS level.
+  - **Install rLogin on the proxy layer.** If you use BungeeCord or Velocity, install rLogin (or its proxy-compatible counterpart) on the proxy as well as on your backend servers. Bypassing the proxy directly to a backend server must not be possible.
+  - **Back up your database regularly.** Scheduled backups protect player data against accidental deletion, corruption, or hardware failure.
+  - **Use a strong, unique database password.** If you are using a MySQL or MariaDB backend, ensure the database user has a strong password and is restricted to `localhost` or your trusted server IP only.
+</Note>
+
+## Related Features
+
+<CardGroup cols={2}>
+  <Card title="Cracked Auth" icon="lock" href="/features/cracked-auth">
+    Learn how password registration and login work for non-premium players, including BCrypt storage and the `/register` flow.
+  </Card>
+  <Card title="Session Management" icon="clock" href="/features/session-management">
+    Configure session persistence to balance convenience and security for returning non-premium players.
+  </Card>
+</CardGroup>

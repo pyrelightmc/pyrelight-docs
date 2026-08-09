@@ -1,0 +1,78 @@
+{
+  "projectType": "saas",
+  "projectName": "rLogin",
+  "projectDescription": "rLogin is a Minecraft authentication plugin by Pyrelight that handles login and registration for both premium and non-premium (cracked) players on your server.",
+  "theme": "almond",
+  "primaryColor": "#ef7025",
+  "lightColor": "#eec9bc",
+  "darkColor": "#4fa1ab",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Configuration",
+            "pages": [
+              "configuration/config-file",
+              "configuration/database",
+              "configuration/messages"
+            ]
+          },
+          {
+            "group": "Features",
+            "pages": [
+              "features/premium-auth",
+              "features/cracked-auth",
+              "features/session-management",
+              "features/security"
+            ]
+          },
+          {
+            "group": "Commands & Permissions",
+            "pages": [
+              "reference/commands",
+              "reference/permissions"
+            ]
+          },
+          {
+            "group": "Help",
+            "pages": [
+              "help/faq",
+              "help/troubleshooting"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Dual authentication for premium (official) and non-premium (cracked) Minecraft accounts",
+    "Automatic login for premium players via Mojang session verification",
+    "Secure password-based registration and login for non-premium players",
+    "Session persistence to reduce repeated logins",
+    "Configurable database backends (SQLite, MySQL)",
+    "Customizable in-game messages and prompts",
+    "Fine-grained permissions for commands and admin actions",
+    "Protection against unauthorized access before authentication"
+  ],
+  "publicApiSurface": [
+    "/register <password> <confirmPassword>",
+    "/login <password>",
+    "/logout",
+    "/changepassword <oldPassword> <newPassword>",
+    "/rlogin reload",
+    "/rlogin unregister <player>",
+    "/rlogin forcelogin <player>",
+    "permission: rlogin.admin",
+    "permission: rlogin.bypass"
+  ]
+}

@@ -1,0 +1,181 @@
+---
+title: "rLogin Database Setup: SQLite and MySQL Configuration"
+sidebarTitle: "Database"
+description: "Set up rLogin to store player data in SQLite or MySQL. Includes connection settings, migration between backends, and performance recommendations."
+---
+
+rLogin stores every player account and session record in a database. You choose the backend that fits your server: SQLite requires zero configuration and is perfect for smaller or standalone servers, while MySQL is recommended for larger communities, BungeeCord networks, or any setup where multiple server instances need to share the same player data.
+
+## Choosing a Backend
+
+<CardGroup cols={2}>
+  <Card title="SQLite" icon="database">
+    Zero-setup, file-based storage. Ideal for single servers, local testing, and situations where simplicity matters more than scalability.
+  </Card>
+  <Card title="MySQL" icon="server">
+    Full relational database server. Ideal for high-traffic servers, multi-instance BungeeCord/Velocity networks, and teams that already operate a database server.
+  </Card>
+</CardGroup>
+
+---
+
+## SQLite (Default)
+
+SQLite is the default backend. rLogin creates a single database file on disk — no external software, no credentials, no extra setup required.
+
+```yaml
+database:
+  type: sqlite
+```
+
+rLogin stores all data in `plugins/rLogin/database.db`. You can back up this file by copying it while the server is stopped.
+
+**Best for:**
+- Small to medium single-server communities
+- Local development and testing
+- Servers where keeping infrastructure simple is a priority
+
+<Warning>
+  SQLite is **not suitable for BungeeCord or Velocity networks**. Each backend server would have its own separate `database.db`, so player accounts would not be shared across servers. Use MySQL instead for any network setup.
+</Warning>
+
+### Backing Up SQLite
+
+<Steps>
+  <Step title="Stop the server">
+    Shut down your Minecraft server completely to ensure rLogin has flushed all pending writes.
+  </Step>
+  <Step title="Copy the database file">
+    Copy `plugins/rLogin/database.db` to a safe location — an external drive, cloud storage, or your regular backup destination.
+  </Step>
+  <Step title="Restart the server">
+    Start your server again. rLogin will continue using the original file normally.
+  </Step>
+</Steps>
+
+<Tip>
+  Automate SQLite backups by scheduling a file copy in a cron job or a server management panel. Daily backups are usually sufficient for most small servers.
+</Tip>
+
+---
+
+## MySQL
+
+MySQL gives you a robust, high-performance database that multiple server instances can connect to simultaneously. It is the right choice when you need shared player data across a BungeeCord or Velocity proxy network, or when your server grows to a point where database I/O on a single file becomes a bottleneck.
+
+```yaml
+database:
+  type: mysql
+  host: localhost
+  port: 3306
+  name: rlogin_db
+  username: rlogin_user
+  password: your_secure_password
+  pool-size: 10
+```
+
+**Best for:**
+- BungeeCord and Velocity proxy networks
+- Large servers with high concurrent login volume
+- Operations that already manage a dedicated database server
+
+### MySQL Option Reference
+
+| Option      | Type      | Default     | Description                                                                      |
+| ----------- | --------- | ----------- | -------------------------------------------------------------------------------- |
+| `host`      | `string`  | `localhost` | Hostname or IP address of your MySQL server.                                     |
+| `port`      | `integer` | `3306`      | Port your MySQL server listens on.                                               |
+| `name`      | `string`  | `rlogin_db` | Name of the database rLogin should use.                                          |
+| `username`  | `string`  | —           | MySQL user rLogin connects as.                                                   |
+| `password`  | `string`  | —           | Password for the MySQL user.                                                     |
+| `pool-size` | `integer` | `10`        | Number of connections in the connection pool. Increase for high-traffic servers. |
+
+### Setting Up a Dedicated MySQL User
+
+rLogin only needs access to its own database. Avoid connecting as `root` or any other superuser — create a dedicated account instead.
+
+<Steps>
+  <Step title="Create the database">
+    Log in to your MySQL server and create a dedicated database for rLogin.
+
+    ```sql
+    CREATE DATABASE rlogin_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+    ```
+  </Step>
+  <Step title="Create a dedicated user">
+    Create a MySQL user that rLogin will use to connect. Replace `your_secure_password` with a strong password.
+
+    ```sql
+    CREATE USER 'rlogin_user'@'localhost' IDENTIFIED BY 'your_secure_password';
+    ```
+
+    If your Minecraft server runs on a different machine from your MySQL server, replace `localhost` with the Minecraft server's IP address.
+  </Step>
+  <Step title="Grant permissions">
+    Give the new user full permissions on the rLogin database only.
+
+    ```sql
+    GRANT ALL PRIVILEGES ON rlogin_db.* TO 'rlogin_user'@'localhost';
+    FLUSH PRIVILEGES;
+    ```
+  </Step>
+  <Step title="Update config.yml">
+    Set `database.type` to `mysql` in `plugins/rLogin/config.yml` and fill in your host, port, database name, username, and password, then run `/rlogin reload` or restart your server.
+  </Step>
+</Steps>
+
+<Tip>
+  If your MySQL server and Minecraft server run on the same machine, keep `host: localhost` and the user bound to `localhost`. This avoids opening MySQL to remote connections unnecessarily.
+</Tip>
+
+### Connection Pool Sizing
+
+The `pool-size` setting controls how many simultaneous database connections rLogin maintains. The default of `10` is appropriate for most servers. If you run a large network with many players logging in at the same time and notice login delays, try increasing it incrementally (e.g. `20`, then `30`) while monitoring your MySQL server's connection count.
+
+<Note>
+  Your MySQL server's `max_connections` setting must be high enough to accommodate the pool size of every application connecting to it. Check your MySQL configuration if you see "too many connections" errors in the rLogin console.
+</Note>
+
+### Backing Up MySQL
+
+Use `mysqldump` to export the rLogin database to a SQL file you can store or restore from.
+
+```bash
+mysqldump -u rlogin_user -p rlogin_db > rlogin_backup_$(date +%F).sql
+```
+
+To restore from a backup:
+
+```bash
+mysql -u rlogin_user -p rlogin_db < rlogin_backup_2024-01-15.sql
+```
+
+<Tip>
+  Schedule nightly `mysqldump` exports using a cron job and rotate old backups automatically to keep your storage usage in check.
+</Tip>
+
+---
+
+## Migrating Between Backends
+
+If you start on SQLite and later want to move to MySQL (or vice versa), follow these steps.
+
+<Steps>
+  <Step title="Stop the server">
+    Always stop your server before changing the database backend to prevent data loss or corruption.
+  </Step>
+  <Step title="Back up your current data">
+    - **SQLite → MySQL:** copy `plugins/rLogin/database.db` somewhere safe.
+    - **MySQL → SQLite:** run a `mysqldump` export as described above.
+  </Step>
+  <Step title="Update config.yml">
+    Change `database.type` to your target backend and supply any required connection fields.
+  </Step>
+  <Step title="Restart the server">
+    Start the server. rLogin will initialise the new backend and create its tables automatically.
+  </Step>
+</Steps>
+
+<Warning>
+  rLogin does not automatically transfer existing player accounts when you switch backends. Players will need to re-register after migration unless you manually import the data. Contact the rLogin community or check the plugin's wiki for any available migration tooling.
+</Warning>
