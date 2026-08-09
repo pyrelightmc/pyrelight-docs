@@ -16,7 +16,7 @@
     "dropdowns": [
       {
         "dropdown": "rLogin",
-        "icon": "door-open",
+        "icon": "/images/rlogin.svg",
         "description": "Premium auto-login and password authentication",
         "groups": [
           {
@@ -88,7 +88,7 @@
     ],
     "primary": {
       "type": "github",
-      "href": "https://github.com/pyrelightmc/rlogin"
+      "href": "https://github.com/pyrelightmc"
     }
   },
   "footer": {
