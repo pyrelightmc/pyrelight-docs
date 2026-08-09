@@ -53,18 +53,37 @@ The importer reads `username`, `realname`, `password` and `ip` from the
   overwritten, so a partial import can leave you with a confusing mix.
 </Warning>
 
-## nLogin and JPremium
+## nLogin
 
-Not implemented yet. Running the command tells you so rather than failing
-halfway:
-
-```
-The nLogin importer isn't implemented yet (Phase 2).
+```bash
+/rlogin migrate nlogin plugins/nLogin/nlogin.db
 ```
 
-<Card title="Contributions welcome" icon="code-pull-request" href="https://github.com/pyrelightmc/rlogin" horizontal>
-  `AuthMeImporter` is about eighty lines and is a fine reference to copy.
-</Card>
+nLogin records the **real Mojang UUID** for accounts it verified as premium,
+and that column is read when present — so a premium player keeps the identity
+they already had instead of arriving as a new offline account.
+
+## JPremium and LoginSecurity
+
+```bash
+/rlogin migrate jpremium plugins/LoginSecurity/LoginSecurity.db
+```
+
+Both are read by the same importer; their tables are close enough in shape.
+
+<Note>
+  Table and column names differ between versions of all three plugins, so they
+  are discovered rather than assumed. If yours is not recognised the import
+  says exactly that instead of failing with a database error — open an issue
+  with your plugin version and it can be added.
+</Note>
+
+<Warning>
+  Only **bcrypt** hashes carry across from these two, plus AuthMe's own
+  SHA-256. Accounts on anything else are still imported, so the player keeps
+  their name and identity, but they must register again — and each one is
+  named in the import log.
+</Warning>
 
 ## After importing
 

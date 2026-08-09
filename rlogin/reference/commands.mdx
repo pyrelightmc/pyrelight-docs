@@ -14,9 +14,10 @@ icon: "terminal"
 | `/logout` | — | Log out and freeze again. |
 | `/2fa <enable\|disable\|confirm> [code]` | — | Manage two-factor authentication. |
 | `/premium` | — | Show your account's premium status. |
+| `/recover <code> <new password>` | — | Spend a one-time code to set a new password and clear 2FA. |
 
-None of these need a permission. `/login`, `/register` and `/2fa` are usable
-while frozen — that is what `limbo.allowed-commands` is for.
+None of these need a permission. `/login`, `/register`, `/2fa` and `/recover`
+are usable while frozen — that is what `limbo.allowed-commands` is for.
 
 ## Administration
 

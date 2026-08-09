@@ -157,6 +157,11 @@ security:
 | `bruteforce.lockout-seconds` | `60` | How long the first lockout lasts. |
 | `bruteforce.lockout-multiplier` | `2.0` | Each further failure multiplies the lockout by this. |
 | `bruteforce.max-lockout-seconds` | `3600` | Ceiling for that escalation. |
+| `registration.max-per-ip` | `3` | Accounts one address may create per window. `0` disables the cap. |
+| `registration.window-minutes` | `60` | How long that window is. |
+| `recovery.enabled` | `true` | Issue one-time recovery codes at registration. |
+| `recovery.codes` | `5` | How many to issue. |
+| `password.reject-common` | `true` | Refuse the passwords at the top of every breach list, and a password that is the player's own name. |
 | `totp.enabled` | `true` | Lets players opt into two-factor with `/2fa enable`. |
 | `totp.issuer` | `rLogin` | The name players see for this server in their authenticator app. |
 | `password.min-length` | `5` | |

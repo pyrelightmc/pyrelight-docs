@@ -54,6 +54,18 @@ log](/rlogin/features/security#passwords-never-reach-the-log).
 Wrong passwords are rate-limited by address, with an escalating lockout. See
 [Security](/rlogin/features/security#brute-force-protection).
 
+## Forgetting a password
+
+At registration the player is shown a set of one-time **recovery codes**. One
+of them sets a new password and clears any 2FA:
+
+```bash
+/recover <code> <new password>
+```
+
+Read [Security](/rlogin/features/security#account-recovery) for what those
+codes are and are not.
+
 ## Changing a password
 
 ```bash
