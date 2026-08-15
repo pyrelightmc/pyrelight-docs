@@ -17,7 +17,6 @@
       {
         "dropdown": "rLogin",
         "icon": "/images/rlogin.svg",
-        "description": "Premium auto-login and password authentication",
         "groups": [
           {
             "group": "Get Started",
@@ -67,7 +66,6 @@
       {
         "dropdown": "rPlugin",
         "icon": "hourglass-half",
-        "description": "In development",
         "groups": [
           {
             "group": "Get Started",
